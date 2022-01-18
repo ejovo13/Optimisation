@@ -31,7 +31,7 @@ Par exemple, compiler notre programme `loops.c` avec la commande `gcc -o loops -
 
 C'est pas très important de savoir lire le code en assemblée, le principe c'est de comprendre que le binôme `cmp` et `jle` aux lignes 14 et 15 est la traduction de notre condition `i < 10`. Si le variable dans un `DWORD PTR` (ce qui correspond a 4 octets, la taille d'un `int` sur l'architechture x86-64) n'est pas plus grand que 9, saute pour processer les instructions de `.L3`. L'instruction `jle` est la forme primitive d'un `goto`.
 
-## -01
+## -O1
 Maintenant, remarquons ce qui ce passe quand on compiler avec l'option `-O1`:
 ![assemblée pour O1](./media/loops-O1.png)
 
