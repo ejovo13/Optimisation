@@ -1,5 +1,5 @@
 Considérer le programme simple `loops.c`:
-```
+```{C}
 #include <stdio.h>
 #include <stdlib.h>
 
