@@ -91,14 +91,14 @@ Il s'agit de:
 
 Ca veut dire quoi, préprocesser un fichier .c ? En effet, à chaque fois qu'on
 écrit \verb|#include <stdio.h>| pour inclure un fichier d'entête, avant la compilation
-un outil dit le préprocesser va remplacer une ligne d'include avec tout le contenu du fichier d'entête.
-Alors la directive préprocesseur \verb|#include| consiste en une opération de copier et coller. Il y a plusieurs d'autres directives qui sont processées avant de compiler,
+un outil dit le préprocesseur va remplacer une ligne d'include avec tout le contenu du fichier d'entête.
+Alors la directive préprocesseur \verb|#include| consiste en une opération de copier et coller. Il y a plusieurs autres directives qui sont processées avant de compiler,
 par exemple le lecteur reconnaitra peut-etre les directives
 \begin{verbatim}
     #if, #ifdef, #ifndef, #else, #elif
 \end{verbatim}
 qui sont employées
-pour la compilation conditionnel (par exemple, inclure un fichier spécifique pour Windows si le système est Windows)
+pour la compilation conditionnelle (par exemple, inclure un fichier spécifique pour Windows si le système est Windows)
 où bien pour éviter d'inclure le même fichier plusiers fois:
 \begin{verbatim}
     #ifndef MONFICHIER_H
@@ -114,13 +114,13 @@ où bien pour éviter d'inclure le même fichier plusiers fois:
 Après que nos fichiers sont préprocessés, ils sont prêts pour être compilés. La compilation traduit des fichiers en C à des instructions de machine
 en binaire, dit des fichiers d'objet qui portent l'extension .o. Pour experimenter chez vous, on peut donner l'option \verb|-c| à gcc pour arrêter après
 le compilation et créer des fichiers d'objet.
-    Le dernier étape s'agit de regrouper tout les fichiers d'objet pertinents et de les emballer dans une seule exécutable. C'est quoi la différence concrète entre
-un `program' C et une `bibliothèque' ? Une bibliothèque c'est une collection des fonctions et leur définitions tandis ce que un program contient la fonction spécial
-\verb|main|, qui sert comme une porte d'entrée de l'exécution d'un program.
+    Lors de la derniere étape, il s'agit de regrouper tout les fichiers d'objet pertinents et de les emballer dans un seul exécutable. C'est quoi la différence concrète entre
+un `programme' C et une `bibliothèque' ? Une bibliothèque c'est une collection des fonctions et leur définitions tandis ce que un programme contient la fonction spécial
+\verb|main|, qui sert comme une porte d'entrée de l'exécution d'un programme.
 
-    Alors finalement l'outil \verb|ld|, dit le `linker' en anglais, relie tous les fichiers .o dans un executable. Son travail est compliqué mais fondamentale. Grosso modo, \verb|ld|
-trouve exactement où elle sont définies les fonctions extérieures qu'on appelle dans un program. Par exemple, pour un program simple HelloWorld on va utiliser la fonction \verb|printf| qui
-est défini d'ailleurs. Au moment de créer l'exécutable, \verb|ld| va chercher la définition de \verb|printf| dans la bibliothèque standarde et mettre les instructions binaires dans l'exécutable.
+    Alors finalement l'outil \verb|ld|, dit le `linker' en anglais, relie tous les fichiers .o dans un executable. Son travail est compliqué mais fondamental. Grosso modo, \verb|ld|
+trouve exactement où sont définies les fonctions extérieures qu'on appelle dans un programme. Par exemple, pour un programme simple HelloWorld on va utiliser la fonction \verb|printf| qui
+est définie d'ailleurs. Au moment de créer l'exécutable, \verb|ld| va chercher la définition de \verb|printf| dans la bibliothèque standard et mettre les instructions binaires dans l'exécutable.
 La magie de \verb|gcc| c'est qu'il a fait tout cela pour vous en coulisse - un vrai emploi ingrat.
 % \fancyhf{}
 % \rhead{La Compilation}
@@ -128,14 +128,14 @@ La magie de \verb|gcc| c'est qu'il a fait tout cela pour vous en coulisse - un v
 Pendant l'étape de compilation, le compileur peut analyser votre code et effectuer des optimisations, si vous le souhaitez.
 Il y a une centaine des options pour le compileur dont au moins cinquante pour l'optimisation. Les options pour changer le comportement
 d'optimisation commence par un -f, suivi par le nom de l'option. Comme il y des nombreuses optimisations spéficiques, gcc a regroupé les
-stratégies d'optimisation qui ont le même objective de compilation. C'est-à-dire que certaines optimisations pourraient rendre le code plus vite mais
+stratégies d'optimisation qui ont le même objectif de compilation. C'est-à-dire que certaines optimisations pourraient rendre le code plus rapide mais
 également augmenter la taille de l'exécutable. Alors les classes se divisent en différents niveaux de -O.
 \subsection*{-O0}
 Désactiver la plupart des optimisations.
 
 \subsection*{-O1}
-Le principe c'est de réduire le temps d'exécution aussi la taille du binarie. Au niveau -O1 la compilation est un peu plus longue mais pas beaucoup
-comme a ce niveau les optimisations restent quand même sipmles.
+Le principe c'est de réduire le temps d'exécution aussi la taille du binaire. Au niveau -O1 la compilation est un peu plus longue mais pas beaucoup
+comme a ce niveau les optimisations restent quand même simples.
 
 Le premier niveau d'optimisation actives les options suivantes
 \newpage
@@ -151,9 +151,9 @@ Le premier niveau d'optimisation actives les options suivantes
 
 \subsection*{-O2}
 
-Le deuxième niveau active plus des optimisations. Sans échanger la taille de l'exécutable
+Le deuxième niveau active plus d'optimisations. Sans échanger la taille de l'exécutable
 pour la vitesse du programme, ce niveau ralentit le temps de compilation mais augmente la performance
-des instructions genérées. Les options activées à ce niveau-là ce sont toutes les options de -O2 plus:
+des instructions genérées. Les options activées à ce niveau là, ce sont toutes les options de -O2 plus:
 
 \begin{figure}[h!]
     \centering
@@ -167,7 +167,7 @@ des instructions genérées. Les options activées à ce niveau-là ce sont tout
 
 \subsection*{-O3}
 
-Un troisième niveau active les optimisations les plus violentes et n'hésitantes pas à créer une exécutable plus grandes au nom de la vitesse.
+Un troisième niveau active les optimisations les plus violentes et n'hésitantes pas à créer un exécutable plus grand au nom de la vitesse.
 Les options activé dans ce niveau sont:
 \newpage
 
@@ -184,11 +184,11 @@ Les options activé dans ce niveau sont:
 
 \section*{Options Sp\'ecifiques}
 Comme on a vu dans le dernier section, il y a de nombreuses options activ\'e avec chaque niveau optimisation et il ne serait pas int\'eressant
-de vous d\'enombrer que fait chacun. Donc, on va choisir juste quelques unes \`a \'etudier qui sont utilis\'e souvent.
+de vous d\'enombrer ce que fait chacun. Donc, on va choisir juste quelques unes \`a \'etudier qui sont utilis\'e souvent.
 
 \subsection*{Enlever le code superflu}
 Pour optimiser le code le compilateur peut enlever du code redondant, en effet le but de l’optimisation du code est de réduire la taille et augmenter la vitesse d’exécution du code.
-Une des premières optimisations qui paraît évident est d’enlever le code qui ne sert pas. Il s'agit principalement de deux types du code redondant - dead code (DC, code mort) et dead storage (DS, stockage mort).
+Une des premières optimisations qui paraît évidente est d’enlever le code qui ne sert pas. Il s'agit principalement de deux types du code redondant - dead code (DC, code mort) et dead storage (DS, stockage mort).
 Tout segment du code qui ne s'execute pas est dit mort.
 
 % \rhead{Code Mort}
@@ -206,11 +206,11 @@ Tout segment du code qui ne s'execute pas est dit mort.
 
 Ici le compilateur va remarquer qu'il y a un segment de code mort et en d\'eduire que l'on peut optimiser.
 Comme nous le voyons dans le code ci-dessus, la condition \verb|1 < 2| est toujours v\'erifi\'e donc la condition du \verb|if| n’a pas
-besoin d’être testé et le \verb|else| ne sera jamais exécuté. Vu que la ramification dun programme peut notoirement effectuer des
+besoin d’être testé et le \verb|else| ne sera jamais exécuté. Vu que la ramification d'un programme peut notoirement effectuer des
 ralentissements d'\'execution, \verb|gcc| peut enlever la branche \verb|if| et effacer le code mort, sous condition que les options \verb|-fdce| et
 \verb|-ftree-dce| soient activ\'ees.
 
-En fait, l'optimisation du code mort est si important que ca que \verb|gcc| enl\`eve automatiquement dans certains cas:
+En fait, l'optimisation du code mort est si importante que ca que \verb|gcc| l'enl\`eve automatiquement dans certains cas:
 % \begin{figure}
     % \centering
     % \begin{subfigure}[h!]{0.4\textwidth}
