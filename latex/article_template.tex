@@ -40,7 +40,7 @@
 \usepackage{caption}
 
 \fancyhf{}
-\rhead{La Compilation}
+% \rhead{La Compilation}
 \lhead{Optimisation du GCC}
 % \rfoot{Page \thepage}
 \cfoot{\thepage}
@@ -72,7 +72,7 @@
 \begin{document}
 \maketitle
 
-\section{Notions de compilation}
+\section*{Notions de compilation}
 Il y a une particuliere puissance caché derrière les trois lettres \verb|gcc| - signifiant à la fois
 la `Gnu Compiler Collection' et la commande à lancer dans le terminal pour compiler un program C. Enfin pas que.
 Quand on appelle une commande de la forme
@@ -122,27 +122,78 @@ un `program' C et une `bibliothèque' ? Une bibliothèque c'est une collection d
 trouve exactement où elle sont définies les fonctions extérieures qu'on appelle dans un program. Par exemple, pour un program simple HelloWorld on va utiliser la fonction \verb|printf| qui
 est défini d'ailleurs. Au moment de créer l'exécutable, \verb|ld| va chercher la définition de \verb|printf| dans la bibliothèque standarde et mettre les instructions binaires dans l'exécutable.
 La magie de \verb|gcc| c'est qu'il a fait tout cela pour vous en coulisse - un vrai emploi ingrat.
+% \fancyhf{}
+% \rhead{La Compilation}
+\section*{L'Optimisation}
+Pendant l'étape de compilation, le compileur peut analyser votre code et effectuer des optimisations, si vous le souhaitez.
+Il y a une centaine des options pour le compileur dont au moins cinquante pour l'optimisation. Les options pour changer le comportement
+d'optimisation commence par un -f, suivi par le nom de l'option. Comme il y des nombreuses optimisations spéficiques, gcc a regroupé les
+stratégies d'optimisation qui ont le même objective de compilation. C'est-à-dire que certaines optimisations pourraient rendre le code plus vite mais
+également augmenter la taille de l'exécutable. Alors les classes se divisent en différents niveaux de -O.
+\subsection*{-O0}
+Désactiver la plupart des optimisations.
 
-\section{L'Optimisation}
-% }
-\subsection{-O0}
+\subsection*{-O1}
+Le principe c'est de réduire le temps d'exécution aussi la taille du binarie. Au niveau -O1 la compilation est un peu plus longue mais pas beaucoup
+comme a ce niveau les optimisations restent quand même sipmles.
 
-\subsection{-O1}
-\subsection{-O2}
-\subsection{-O3}
+Le premier niveau d'optimisation actives les options suivantes
+\newpage
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[h!]{0.49\textwidth}
+        \includegraphics[height=\linewidth]{./media/O1top}
+    \end{subfigure}
+    \begin{subfigure}[h!]{0.49\textwidth}
+        \includegraphics[height=\linewidth]{./media/O1bot}
+    \end{subfigure}
+\end{figure}
 
-Your text goes here.
+\subsection*{-O2}
 
-\section{Options Sp\'ecifiques}
+Le deuxième niveau active plus des optimisations. Sans échanger la taille de l'exécutable
+pour la vitesse du programme, ce niveau ralentit le temps de compilation mais augmente la performance
+des instructions genérées. Les options activées à ce niveau-là ce sont toutes les options de -O2 plus:
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[h!]{0.49\textwidth}
+        \includegraphics[height=.8\linewidth]{./media/O2top}
+    \end{subfigure}
+    \begin{subfigure}[h!]{0.49\textwidth}
+        \includegraphics[height=.8\linewidth]{./media/O2bot}
+    \end{subfigure}
+\end{figure}
+
+\subsection*{-O3}
+
+Un troisième niveau active les optimisations les plus violentes et n'hésitantes pas à créer une exécutable plus grandes au nom de la vitesse.
+Les options activé dans ce niveau sont:
+\newpage
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[h!]{0.49\textwidth}
+        \includegraphics[height=.8\linewidth]{./media/O2top}
+    \end{subfigure}
+    \begin{subfigure}[h!]{0.49\textwidth}
+        \includegraphics[height=.8\linewidth]{./media/O2bot}
+    \end{subfigure}
+\end{figure}
+
+
+\section*{Options Sp\'ecifiques}
 Comme on a vu dans le dernier section, il y a de nombreuses options activ\'e avec chaque niveau optimisation et il ne serait pas int\'eressant
-de vous d\'enombrer que fait chacun. Donc, on va choisir juste quelques unes \`a \'etudier qui sont utilis\'e souvent
+de vous d\'enombrer que fait chacun. Donc, on va choisir juste quelques unes \`a \'etudier qui sont utilis\'e souvent.
 
-\subsection{Enlever le code superflu}
+\subsection*{Enlever le code superflu}
 Pour optimiser le code le compilateur peut enlever du code redondant, en effet le but de l’optimisation du code est de réduire la taille et augmenter la vitesse d’exécution du code.
 Une des premières optimisations qui paraît évident est d’enlever le code qui ne sert pas. Il s'agit principalement de deux types du code redondant - dead code (DC, code mort) et dead storage (DS, stockage mort).
 Tout segment du code qui ne s'execute pas est dit mort.
 
-\subsubsection{-fdce, -ftree-dce}
+% \rhead{Code Mort}
+
+\subsubsection*{-fdce, -ftree-dce}
 
 \'Etudions le segment du code suivant:
 \begin{verbatim}
@@ -174,12 +225,10 @@ En fait, l'optimisation du code mort est si important que ca que \verb|gcc| enl\
         \includegraphics[width=\linewidth]{media/dce-right.png}
         % \subcaption{Assembl\'ee donn\'e par gcc}
     \end{subfigure}
-    \caption{Instructions en assembl\'ee gen\'er\'ees pour x86-64 par gcc pour un program simple.}
+    \caption{Instructions en assembl\'ee gen\'er\'ees pour x86-64 par gcc pour un program simple. Le code mort après else ne se traduit même pas.}
 \end{figure}
 N'ayez pas peur de l'assembl\'ee! Comme nous le pouvons constater, les instructions pour la deuxi\`eme branche de l'expression \verb|if| ne sont m\^eme
-pas gen\'er\'ees (indiqu\'e par le manque de couleur surlignante l'expression \verb|print|)!
-
-\newpage
+pas gen\'er\'ees (indiqu\'e par le manque de couleur surlignante la deuxième \verb|printf|)!
 
 On peut comparer cet exemple avec un program simple similaire, mais qui diff\`ere cette fois-ci parce que le compileur ne peut pas d\'eterminer si la condition
 est toujours v\'erifi\'e. \'Etudions le program suivant.
@@ -201,28 +250,7 @@ est toujours v\'erifi\'e. \'Etudions le program suivant.
 Vu que la condition dans le \verb|if| est dependant sur une donn\'ee d'entr\'ee qui se proc\'esse a l'ex\'ecution, il est impossible de d\'eterminer
 au moment de compilation si le code est mort. Du coup, il n'y a aucun optimisation dans cet example.
 
-
-% \begin{minipage}[t]{width=0.5\textwidth}
-
-%     \includegraphics[width=\textwidth]{media/dce_left.png}
-% \end{minipage}
-    % \end{subfigure}
-    % \caption{This is supposed to be a figure}
-% \end{figure}
-
-% \begin{minipage}[t]{0.45\textwidth}
-% \includegraphics[width=\textwidth]{media/dce-right.png}
-% \end{minipage}
-% \begin{minipage}[t]{0.45\textwidth}
-% \includegraphics[width=\textwidth]{media/dce-right.png}
-% \end{minipage}
-
-
-% \begin{minipage}[t]{0.3\textwidth}
-% \includegraphics[width=\textwidth]{media/dce-right.png}
-% \end{minipage}
-
-\subsubsection{-fdse, -ftree-dse}
+\subsubsection*{-fdse, -ftree-dse}
 
 Ces options traiten le cas o\`u il y a des variables mortes - c'est-\`a-dire des variables qui ne sont jamais acced\'ees.
 Par exemple dans le code qui suit, la variable y n’est pas utilisée. Pour optimiser le code il suffit juste de retirer la ligne et ainsi
@@ -237,7 +265,6 @@ int my_func() {
 }
 \end{verbatim}
 
-\newpage
 
 On peut \'etudier l'assembl\'e pour visualiser les optimisation fait par gcc.
 
@@ -259,4 +286,86 @@ On peut \'etudier l'assembl\'e pour visualiser les optimisation fait par gcc.
 \end{figure}
 
 La fonction enti\`ere est remplac\'ee par une instruction de charger la valeur 5 dans un registre du CPU.
+
+
+\section*{Optimisation des boucles}
+
+Nous allons etudier ici quelques options qui permettent d’optimiser la compilation des boucles.
+
+
+\subsection*{-fpeel-loops}
+Le peeling de boucle est un cas particulier du découpage de boucle. Le découpage de boucle est une méthode d’optimisation du compilateur.
+Celui-ci elimine les dépendances. Il simplifie la boucle en plusieurs boucles afin d’éliminer des dépendances. Ainsi ces boucles auront le
+meme corps mais vont itérer différentes parties de la boucle. La particularité du peeling de boucle va être que si le compilateur détecte
+une ou quelques itérations problématiques il va la sortir de la boucle et l’exécuter en dehors de la boucle (c’est pour cela que ca s’appelle
+l’épluchage). Ainsi si l’on a par exemple 
+\begin{verbatim}
+int p = 10;
+for (int i=0; i<10; ++i) {
+    y[i] = x[i] + x[p];
+    p = i;
+}
+\end{verbatim}
+le compilateur avec fpeel-loops va remarquer que p=10 seulement a la première itération et donc il va compiler comme si le code était écris
+\begin{verbatim}
+y[0] = x[0] + x[10];
+for (int i=1; i<10; ++i) {
+   y[i] = x[i] + x[i-1];
+}
+\end{verbatim}
+et donc on peut remarquer que le p ici n’est plus utilisé et est remplacé par directement 10 et la première
+itération est sorti du corps de la boucle et est remplacé par y[0] = x[0] + x[10];
+
+\subsection*{-fmove-loop-invariants}
+Le loop invariant loop est une optimisation du compilateur qui permet de sortir un invariant d’une boucle sans changer sa semantique. Par exemple :
+
+\begin{verbatim}
+int i = 0;
+while (i < n) {
+    x = y + z;
+    a[i] = 6 * i + x * x;
+    ++i;
+}
+\end{verbatim}
+On peut voir que x=y+z est un invariant dans la boucle et donc le fmove-loop-invariants va le sortir
+ de la boucle sans en changer le sens.
+
+\subsection*{-funswitch-loops}
+le funswitch-loops est une methode d’optimisation du compilateur qui va permettre de sortir une condition situe a
+linterieur d’une boucle a l’exterieur de celle-ci. Pour ceux elle va dupliquer le corps de la boucle en en placant
+a l’interieur de conditions qui etaient de base a l’interieur. Cela permet d’avoir une meilleure parrallelisation de
+ la boucle (c’est une technique d’optimisation de boucle) et donc ameliore la vitesse du programme. Montrons un exemple de funswitch-loops
+\begin{verbatim}
+int i, w, x[1000], y[1000];
+  for (i = 0; i < 1000; i++) {
+    x[i] += y[i];
+    if (w)
+      y[i] = 0;
+  }
+\end{verbatim}
+ici on peut sortir le `\verb|if (w)|' et dupliquer les boucles for.
+Ainsi le compilateur pourra transformer cela en
+\begin{verbatim}
+int i, w, x[1000], y[1000];
+  if (w) {
+    for (i = 0; i < 1000; i++) {
+      x[i] += y[i];
+      y[i] = 0;
+    }
+  } else {
+    for (i = 0; i < 1000; i++) {
+      x[i] += y[i];
+    }
+  }
+\end{verbatim}
+
+\section*{Dernières Remarques}
+Comme il y a un vaste nombre des options d'optimisations, on aurait aimé de vous en parler de plus ! Malheuresement on aura plus de l'espace. Ce qu'il faudrait
+retenir du coup pour la suite c'est qu'il y des niveaux d'optimisations constructifs qui permet au programmeur de choisir si l'on veut réduire la taille du binaire
+ou le temps d'exécution. On peut activer une groupe des options \`a la fois avec les options -O1, -O2, ou -O3. Il y a aussi des autres groupes de O telles que -Og, -Oz, -Os, -Ofast
+que je vous encourage de vous en renseigner. On peut activer des optimisations spécifiques avec une
+option commenceant par -f, -fno sinon pour le désactiver. Par exemple, l'on a -ffast-math pour activer ou bien -fnofast-math pour le désactiver.
+En conclusion, on espère que ce rapport vous a appris quelque chose du processus de compilation et qu'on vous a allumé une appréciation pour la magique qui est gcc.
+
+
 \end{document}
