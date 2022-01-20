@@ -1,5 +1,3 @@
-% !TEX TS-program = pdflatex
-% !TEX encoding = UTF-8 Unicode
 
 % This is a simple template for a LaTeX document using the "article" class.
 % See "book", "report", "letter" for other types of document.
@@ -22,7 +20,6 @@
 % \geometry{landscape} % set up the page for landscape
 %   read geometry.pdf for detailed page layout information
 
-\usepackage{graphicx} % support the \includegraphics command and options
 
 % \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
 
@@ -31,12 +28,16 @@
 \usepackage{array} % for better arrays (eg matrices) in maths
 \usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
-\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 % These packages are all incorporated in the memoir class to one degree or another...
 
 %%% HEADERS & FOOTERS
 \usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
 \pagestyle{fancy} % options: empty , plain , fancy
+
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{subcaption}
+\usepackage{caption}
 
 \fancyhf{}
 \rhead{La Compilation}
@@ -71,7 +72,7 @@
 \begin{document}
 \maketitle
 
-\section*{Notions de compilation}
+\section{Notions de compilation}
 Il y a une particuliere puissance caché derrière les trois lettres \verb|gcc| - signifiant à la fois
 la `Gnu Compiler Collection' et la commande à lancer dans le terminal pour compiler un program C. Enfin pas que.
 Quand on appelle une commande de la forme
@@ -103,7 +104,7 @@ où bien pour éviter d'inclure le même fichier plusiers fois:
     #ifndef MONFICHIER_H
     #define MONFICHIER_H
 
-    /* Contenu du fichier monfichier.h */
+    / Contenu du fichier monfichier.h /
 
     ...
 
@@ -122,21 +123,140 @@ trouve exactement où elle sont définies les fonctions extérieures qu'on appel
 est défini d'ailleurs. Au moment de créer l'exécutable, \verb|ld| va chercher la définition de \verb|printf| dans la bibliothèque standarde et mettre les instructions binaires dans l'exécutable.
 La magie de \verb|gcc| c'est qu'il a fait tout cela pour vous en coulisse - un vrai emploi ingrat.
 
-\section*{L'Optimisation}
+\section{L'Optimisation}
 % }
-\subsection*{-O0, -O1, -O2, -O3}
+\subsection{-O0}
+
+\subsection{-O1}
+\subsection{-O2}
+\subsection{-O3}
 
 Your text goes here.
 
-\subsection*{A subsection}
+\section{Options Sp\'ecifiques}
+Comme on a vu dans le dernier section, il y a de nombreuses options activ\'e avec chaque niveau optimisation et il ne serait pas int\'eressant
+de vous d\'enombrer que fait chacun. Donc, on va choisir juste quelques unes \`a \'etudier qui sont utilis\'e souvent
 
-More text.
-Even more text.
+\subsection{Enlever le code superflu}
+Pour optimiser le code le compilateur peut enlever du code redondant, en effet le but de l’optimisation du code est de réduire la taille et augmenter la vitesse d’exécution du code.
+Une des premières optimisations qui paraît évident est d’enlever le code qui ne sert pas. Il s'agit principalement de deux types du code redondant - dead code (DC, code mort) et dead storage (DS, stockage mort).
+Tout segment du code qui ne s'execute pas est dit mort.
 
-Here is playing around with some of greek symbols:
+\subsubsection{-fdce, -ftree-dce}
+
+\'Etudions le segment du code suivant:
+\begin{verbatim}
+    if (1 < 2) {
+        printf("1 est plus petit que 2");
+    } else {
+        printf("Ca marche plus les maths");
+    }
+\end{verbatim}
+
+Ici le compilateur va remarquer qu'il y a un segment de code mort et en d\'eduire que l'on peut optimiser.
+Comme nous le voyons dans le code ci-dessus, la condition \verb|1 < 2| est toujours v\'erifi\'e donc la condition du \verb|if| n’a pas
+besoin d’être testé et le \verb|else| ne sera jamais exécuté. Vu que la ramification dun programme peut notoirement effectuer des
+ralentissements d'\'execution, \verb|gcc| peut enlever la branche \verb|if| et effacer le code mort, sous condition que les options \verb|-fdce| et
+\verb|-ftree-dce| soient activ\'ees.
+
+En fait, l'optimisation du code mort est si important que ca que \verb|gcc| enl\`eve automatiquement dans certains cas:
+% \begin{figure}
+    % \centering
+    % \begin{subfigure}[h!]{0.4\textwidth}
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[h!]{0.4\textwidth}
+        \includegraphics[width=\linewidth]{media/dce_left.png}
+        % \subcaption{Code C}
+    \end{subfigure}
+    \begin{subfigure}[h!]{0.4\textwidth}
+        \includegraphics[width=\linewidth]{media/dce-right.png}
+        % \subcaption{Assembl\'ee donn\'e par gcc}
+    \end{subfigure}
+    \caption{Instructions en assembl\'ee gen\'er\'ees pour x86-64 par gcc pour un program simple.}
+\end{figure}
+N'ayez pas peur de l'assembl\'ee! Comme nous le pouvons constater, les instructions pour la deuxi\`eme branche de l'expression \verb|if| ne sont m\^eme
+pas gen\'er\'ees (indiqu\'e par le manque de couleur surlignante l'expression \verb|print|)!
 
 \newpage
 
-Sup boy
+On peut comparer cet exemple avec un program simple similaire, mais qui diff\`ere cette fois-ci parce que le compileur ne peut pas d\'eterminer si la condition
+est toujours v\'erifi\'e. \'Etudions le program suivant.
 
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[h!]{0.4\textwidth}
+        \includegraphics[width=\linewidth]{media/nodfce-left.png}
+        % \subcaption{Code C}
+    \end{subfigure}
+    \begin{subfigure}[h!]{0.4\textwidth}
+        \includegraphics[width=\linewidth]{media/nodce-right.png}
+        % \subcaption{Assembl\'ee donn\'e par gcc}
+    \end{subfigure}
+    \caption{Exemple o\`u des instructions sont gen\'er\'ees pour les deux branches du if}
+\end{figure}
+
+Vu que la condition dans le \verb|if| est dependant sur une donn\'ee d'entr\'ee qui se proc\'esse a l'ex\'ecution, il est impossible de d\'eterminer
+au moment de compilation si le code est mort. Du coup, il n'y a aucun optimisation dans cet example.
+
+
+% \begin{minipage}[t]{width=0.5\textwidth}
+
+%     \includegraphics[width=\textwidth]{media/dce_left.png}
+% \end{minipage}
+    % \end{subfigure}
+    % \caption{This is supposed to be a figure}
+% \end{figure}
+
+% \begin{minipage}[t]{0.45\textwidth}
+% \includegraphics[width=\textwidth]{media/dce-right.png}
+% \end{minipage}
+% \begin{minipage}[t]{0.45\textwidth}
+% \includegraphics[width=\textwidth]{media/dce-right.png}
+% \end{minipage}
+
+
+% \begin{minipage}[t]{0.3\textwidth}
+% \includegraphics[width=\textwidth]{media/dce-right.png}
+% \end{minipage}
+
+\subsubsection{-fdse, -ftree-dse}
+
+Ces options traiten le cas o\`u il y a des variables mortes - c'est-\`a-dire des variables qui ne sont jamais acced\'ees.
+Par exemple dans le code qui suit, la variable y n’est pas utilisée. Pour optimiser le code il suffit juste de retirer la ligne et ainsi
+réduire la taille et augmenter la vitesse d’exécution du code. Cela marche aussi avec des fonctions qui ne font rien ou ne sont pas utilisés.
+
+\begin{verbatim}
+
+int my_func() {
+    int x = 5;
+    int y = 5;
+    return x;
+}
+\end{verbatim}
+
+\newpage
+
+On peut \'etudier l'assembl\'e pour visualiser les optimisation fait par gcc.
+
+\begin{figure}[h!]
+    \centering
+    % \begin{subfigure}[h!]{0.3\textwidth}
+    %     \includegraphics[width=\linewidth]{media/my_func.png}
+    %     % \subcaption{Code C}
+    % \end{subfigure}
+    \begin{subfigure}[h!]{0.4\textwidth}
+        \includegraphics[width=\linewidth]{media/myfuncO0.png}
+        \subcaption{-O0}
+    \end{subfigure}
+    \begin{subfigure}[h!]{0.4\textwidth}
+        \includegraphics[width=\linewidth]{media/myfuncO1.png}
+        \subcaption{-O1}
+    \end{subfigure}
+    \caption{Exemple o\`u le DSE est enl\`ev\'e}
+\end{figure}
+
+La fonction enti\`ere est remplac\'ee par une instruction de charger la valeur 5 dans un registre du CPU.
 \end{document}
